@@ -1,0 +1,110 @@
+npm init -y
+
+npm install webpack webpack-cli --save-dev
+
+npm install react@17.0.2 react-dom@17.0.2 --save
+
+npm install @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
+
+babel-core: Chuyển đổi ES6 về ES5
+babel-loader: Cho phép chuyển các files Javascript sử dụng Babel & Webpack
+babel-preset-env: Cài đặt sẵn giúp bạn sử dụng Javascript mới nhất trên nhiều môi trường khác nhau (nhiều trình duyệt khác nhau). Gói này đơn giản là support truyển đổi ES6, ES7, ES8, ES... về ES5.
+babel-preset-react: Hỗ trợ chuyển đổi JSX về Javascript
+
+public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React webpack</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+src/index.js
+import React from 'react' // nạp thư viện react
+import ReactDOM from 'react-dom' // nạp thư viện react-dom
+
+// Tạo component App
+function App() {
+    return (
+        <div>
+            <h1>Xin chào anh em F8!</h1>
+        </div>
+    )
+}
+// Render component App vào #root element
+ReactDOM.render(<App />, document.getElementById('root'))
+
+npm install css-loader style-loader --save-dev
+
+webpack.config.js
+const path = require("path");
+
+module.exports = {
+  entry: "./src/index.js", // Dẫn tới file index.js ta đã tạo
+  output: {
+    path: path.join(__dirname, "/build"), // Thư mục chứa file được build ra
+    filename: "bundle.js" // Tên file được build ra
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // Sẽ sử dụng babel-loader cho những file .js
+        exclude: /node_modules/, // Loại trừ thư mục node_modules
+        use: ["babel-loader"]
+      },
+      {
+        test: /\.css$/, // Sử dụng style-loader, css-loader cho file .css
+        use: ["style-loader", "css-loader"]
+      }
+    ]
+  },
+  // Chứa các plugins sẽ cài đặt trong tương lai
+  plugins: [
+  ]
+};
+
+.babelrc
+{
+    "presets": [
+        "@babel/preset-env",
+        "@babel/preset-react"
+    ]
+}
+
+package.json
+"scripts": {
+    ...
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+}
+npm start sẽ chạy lệnh ở phần start, npm run build sẽ chạy lệnh ở phần build. Trừ start ra thì bạn cần thêm từ run nữa nhé.
+
+
+Live server: 
+add build/bundle.js in index.html 
+<script src="../build/bundle.js"></script>
+
+Add auto bundle.js
+npm install html-webpack-plugin --save-dev
+webpack.config.js
+plugins: [
+    new HtmlWebpackPlugin({
+      template: "./public/index.html"
+    })
+  ]
+
+Webpack server: 
+npm install webpack-dev-server --save-dev
+"scripts": {
+    ...
+    "start": "webpack-dev-server --mode development --open --hot",
+    ...
+}
+
+npm start 
+localhost:8080
